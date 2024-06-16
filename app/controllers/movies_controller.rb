@@ -7,8 +7,20 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    @all_ratings = Movie.all_ratings
+
+    if params[:ratings].present?
+      @ratings_to_show_hash = params[:ratings]
+      @ratings_to_show = params[:ratings].keys
+    else
+      @ratings_to_show_hash = {}
+      @ratings_to_show = @all_ratings
+    end
+
+#   @movies = Movie.all
+    @movies = Movie.with_ratings(@ratings_to_show)
   end
+
 
   def new
     # default: render 'new' template
@@ -43,5 +55,22 @@ class MoviesController < ApplicationController
   # This helps make clear which methods respond to requests, and which ones do not.
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
+  end
+end
+
+
+class MoviesController < ApplicationController
+  def index
+    @all_ratings = Movie.all_ratings
+
+    if params[:ratings].present?
+      @ratings_to_show_hash = params[:ratings]
+      @ratings_to_show = params[:ratings].keys
+    else
+      @ratings_to_show_hash = {}
+      @ratings_to_show = @all_ratings
+    end
+
+    @movies = Movie.with_ratings(@ratings_to_show)
   end
 end
