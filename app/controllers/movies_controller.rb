@@ -7,22 +7,24 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if params[:ratings].nil? && params[:sort].nil?
-      params[:ratings] = session[:ratings] unless session[:ratings].nil?
-      params[:sort] = session[:sort] unless session[:sort].nil?
+    if params[:ratings].nil? && params[:sort].nil? && (!session[:ratings].nil? || !session[:sort].nil?)
+      flash.keep
+      redirect_to movies_path(ratings: session[:ratings], sort: session[:sort])
+      return
     end
 
     # Update session with the current params
     session[:ratings] = params[:ratings]
     session[:sort] = params[:sort]
     
+    # Get all possible rating
     @all_ratings = Movie.all_ratings
 
     if params[:ratings].present?
       @ratings_to_show_hash = params[:ratings]
       @ratings_to_show = params[:ratings].keys
     else
-      @ratings_to_show_hash = {}
+      @ratings_to_show_hash = Hash[@all_ratings.map { |rating| [rating, "1"] }]
       @ratings_to_show = @all_ratings
     end
 

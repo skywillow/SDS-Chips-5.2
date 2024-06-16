@@ -4,11 +4,15 @@ class Movie < ActiveRecord::Base
   end
 
   def self.with_ratings(ratings_list)
-    if ratings_list.nil?
-      Movie.all
+    if ratings_list.nil? || ratings_list.empty?
+      all
     else
-      Movie.where(rating: ratings_list)
+      where(rating: ratings_list)
     end
+  end
+
+  def self.all_ratings
+    pluck(:rating).uniq
   end
 
   def self.sorted_by(column)
