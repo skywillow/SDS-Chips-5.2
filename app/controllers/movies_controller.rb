@@ -17,8 +17,15 @@ class MoviesController < ApplicationController
       @ratings_to_show = @all_ratings
     end
 
-#   @movies = Movie.all
     @movies = Movie.with_ratings(@ratings_to_show)
+    if params[:sort].present?
+      @sort = params[:sort]
+      @movies = @movies.order(@sort)
+    end
+
+    @title_header_class = 'hilite bg-warning' if @sort == 'title'
+    @release_date_header_class = 'hilite bg-warning' if @sort == 'release_date'
+
   end
 
 
@@ -58,19 +65,3 @@ class MoviesController < ApplicationController
   end
 end
 
-
-class MoviesController < ApplicationController
-  def index
-    @all_ratings = Movie.all_ratings
-
-    if params[:ratings].present?
-      @ratings_to_show_hash = params[:ratings]
-      @ratings_to_show = params[:ratings].keys
-    else
-      @ratings_to_show_hash = {}
-      @ratings_to_show = @all_ratings
-    end
-
-    @movies = Movie.with_ratings(@ratings_to_show)
-  end
-end
